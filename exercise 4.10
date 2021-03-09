@@ -1,0 +1,32 @@
+%4.10
+clear all
+
+%from the book p. 117
+omega = 2;
+P = 2*pi/omega;
+dt = P/20;
+T = 3*P;
+N_t = floor(T/dt);
+t = linspace(0, N_t*dt, N_t+1);
+
+u = zeros(N_t+1, 1);
+v = zeros(N_t+1, 1);
+% Initial condition
+X_0 = 2;
+u(1) = X_0;
+v(1) = 0;
+[EP, EK] = osc_energy(u,v,omega);
+%also from the book p.118
+% Step equations forward in time,forward euler method
+for n = 1:N_t
+u(n+1) = u(n) + dt*v(n);
+v(n+1) = v(n) - dt*omega^2*u(n);
+end
+[EP,EK] = osc_energy(u,v,omega);
+plot(t, EP + EK);
+ylabel('potential + kinetic energy');
+xlabel('t');
+function [EP, EK] = osc_energy(u, v, omega)
+EP = 0.5*(omega.^2)*(u.^2); %potential energy
+EK = 0.5*(v.^2); %kinetic energty 
+end
