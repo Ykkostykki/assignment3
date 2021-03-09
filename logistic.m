@@ -1,26 +1,34 @@
 %assignment 3
-%eetu härkönen 0488832 Pierupaska1234
-test_ode
-
+%eetu hÃ¤rkÃ¶nen 0488832 
+logistics
+%git test update fast
 function logistics()
 %logistic script from the book
 f = @(u, t) 0.1*(1 - u/500)*u;
 U_0 = 100;  
-T = 60;
-
-condition = true
+T = 100;
+dt = 30;    %initial dt value 
+k = 0;      
+[u_1,t_1] = ode_FE(f,U_0,dt,T);     %first u and t values from initial dt
+fprintf('Initial dt value = %f, k = %f .\n', dt, k)
+condition = true;
 while condition == true
-    dt_k = 2^(-k)*dt;  
+    dt_k = 2^(-k)*dt;   %new dt value
     
-    [u, t] = ode_FE(f, U_0, dt_k, T);
-    plot(t, u, 'b-');
+    [u_2, t_2] = ode_FE(f, U_0, dt_k, T);   %new u and t with new variables
+    plot(t_1, u_1, 'b-', t_2, u_2, 'r');    %plot old ut and new ut
     xlabel('t');  ylabel('N(t)');
-    filestem = strcat('tmp_',num2str(dt_k));
-
-    dt_k = 20;  T = 100;
-    [u, t] = ode_FE(f, U_0, dt_k, T);
-    plot(t, u, 'b-');
-    xlabel('t');  ylabel('N(t)');
+    value = input('type 1 to continue with new dt value \n'); %loop condition
+%     fprintf('value of dt_k = %f, k being %.f. \n', dt_k, k)
+    if value == 1   %save u and t values for new round
+        u_1 = u_2;
+        t_1 = t_2;
+%         fprintf('value of dt_k = %f, k being %.f. \n', dt_k, k)
+    else
+        condition = false;
+    end
+    k = k + 1;  %refresh k
+    fprintf('value of dt_k = %f, k being %.f. \n', dt_k, k)
 end
 end
 
@@ -36,11 +44,3 @@ sol = u;
 time = t;
 end
 
-function test_ode()
-    function r= f(u,t)
-        r = 0.1*u;
-    end
-[u,t] = ode_FE(@f,100,0.5,20);
-plot(t,u,t,100*exp(0.1*t));
-
-end
